@@ -5,7 +5,7 @@ module.exports = {
     maxDbConnectionPool: 40,
     dbCredentials: {
         userName: 'postgres',
-        password: 'Worms3DD',
+        password: 'password',
         dbName: 'postgres',
     },
     secret: 'thinkific',
