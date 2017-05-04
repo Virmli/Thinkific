@@ -15,7 +15,7 @@ const DeviceService = {
             .catch(err => `Woops, something wrong err: ${err}`);
     },
     /**
-     * Get User By Id
+     * Login user into system.
      * @param id
      * @returns {Promise}
      */
@@ -25,32 +25,34 @@ const DeviceService = {
             .catch(err => `Woops, something wrong err: ${err}`);
     },
     /**
-     * This function provide user with next integer in a sequance.
+     * Get User By Id
      * @param id
-     * @returns {Promise.<TResult>}
+     * @returns {Promise}
      */
-    getNextInt(id) {
+    getUserById(id) {
         return userDao.findById(id)
-            .then((user) => {
-                if (user) {
-                    const nextInt = user.dataValues.currentInteger + 1;
-                    return userDao.updateCurrentInt(id, nextInt)
-                        .then(result => ({ currentInteger: result.dataValues.currentInteger }))
-                        .catch(err => `Woops, something wrong err: ${err}`);
-                }
-                return 'User does not exist';
-            })
+            .then(result => result)
             .catch(err => `Woops, something wrong err: ${err}`);
     },
     /**
-     * Reset current int.
-     * TODO: we can merge two functionalities in one. by passing extra params like reset or next.
+     * This function provide user with next integer in a sequance.
+     * If obj.type exist then reset current integer with number provided by user.
+     * @param obj
+     * @returns {Promise.<TResult>}
      */
-    resetCurrentInt(id, newInt) {
-        return userDao.findById(id)
+    integerManipulation(obj) {
+        let number;
+        return userDao.findById(obj.id)
             .then((user) => {
                 if (user) {
-                    return userDao.updateCurrentInt(id, newInt)
+                    // if we want to reset image then we pass new interger
+                    if (obj.type === 'reset') {
+                        number = obj.newInt;
+                    } else {
+                        // if we want to increment current integer.
+                        number = user.dataValues.currentInteger + 1;
+                    }
+                    return userDao.updateCurrentInt(obj.id, number)
                         .then(result => ({ currentInteger: result.dataValues.currentInteger }))
                         .catch(err => `Woops, something wrong err: ${err}`);
                 }

@@ -107,8 +107,10 @@ router.delete('/:id', (req, res) => {
  * Get the next integer in the sequence for the user with id.
  */
 router.get('/:id/next', (req, res) => {
-    const userId = req.params.id;
-    userService.getNextInt(userId).then((result) => {
+    const obj = {
+        id: req.params.id,
+    };
+    userService.integerManipulation(obj).then((result) => {
         res.send(result);
     });
 });
@@ -131,11 +133,18 @@ router.get('/:id/current', (req, res) => {
  * Reset the current integer for the user.
  */
 router.put('/:id/reset/current', (req, res) => {
-    const userId = req.params.id;
-    const newInt = req.body.newInt; // TODO: non negative and integer only.
-    userService.resetCurrentInt(userId, newInt).then((result) => {
-        res.send(result);
-    });
+    const obj = {
+        id: req.params.id,
+        newInt: req.body.newInt,
+        type: 'reset',
+    };
+    if (!(isNaN(obj.newInt)) && obj.newInt <= 0) {
+        res.json({ success: false, message: 'New integer should be number and greater or equal to 0' });
+    } else {
+        userService.integerManipulation(obj).then((result) => {
+            res.send(result);
+        });
+    }
 });
 
 module.exports = router;
