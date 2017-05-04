@@ -1,0 +1,15 @@
+const pjson = require('../package.json');
+
+console.log(`*** STARTING ${pjson.name} version: ${pjson.version} ***`);
+// start application
+const dbConnector = require('../shared/databaseConnector');
+
+
+dbConnector.connect();
+dbConnector.loadModels((err) => {
+    if (err) {
+        console.log('Could not sync with the database');
+        // return;
+    }
+    require('../app').app;
+});
